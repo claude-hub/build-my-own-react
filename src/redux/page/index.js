@@ -4,9 +4,15 @@ import store from '../store';
 export default class ReduxPage extends Component {
   // 如果点击按钮不能更新，查看是否订阅(subscribe)状态变更。
   componentDidMount() {
-    store.subscribe(() => {
+    this.unsubscribe = store.subscribe(() => {
       this.forceUpdate();
     });
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 
   add = () => {

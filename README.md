@@ -4,9 +4,9 @@
 
 实现功能列表
 
-- [ ] createStore 创建store
-- [ ] reducer 初始化、修改状态函数
-- [ ] getState 获取状态值
-- [ ] dispatch 提交更新
-- [ ] subscribe 变更订阅
+- [x] createStore 创建store
+- [x] reducer 初始化、修改状态函数
+- [x] getState 获取状态值
+- [x] dispatch 提交更新
+- [x] subscribe 变更订阅
 
