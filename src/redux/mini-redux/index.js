@@ -1,3 +1,4 @@
 import createStore from './createStore';
+import applyMiddleware from './applyMiddleware';
 
-export default createStore;
+export { createStore, applyMiddleware };
