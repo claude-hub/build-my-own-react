@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import ReduxPage from './redux/page';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ReduxPage />
   </React.StrictMode>,
   document.getElementById('root')
 );
