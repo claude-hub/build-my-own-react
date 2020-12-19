@@ -86,3 +86,153 @@ function addX(y) {
 
 addX(2)(1) // 3
 ```
+
+### 4. mini版实现
+
+### 4.1 通过原库实现
+
+思路：先使用一个简单的页面，使用Redux和React搭建起来，然后再自己实现对应的函数。
+
+**page**
+
+```javascript
+import React, { Component } from 'react';
+import store from '../store';
+
+export default class ReduxPage extends Component {
+  // 如果点击按钮不能更新，查看是否订阅(subscribe)状态变更。
+  componentDidMount() {
+    this.unsubscribe = store.subscribe(() => {
+      this.forceUpdate();
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  }
+
+  add = () => {
+    store.dispatch({ type: 'ADD' });
+  };
+
+  minus = () => {
+    store.dispatch({ type: 'MINUS' });
+  };
+
+  render() {
+    return (
+      <div style={{ padding: 24 }}>
+        <h3>ReduxPage</h3>
+        <p>{store.getState()}</p>
+        <button type="button" onClick={this.add}> + add</button>
+        <button type="button" onClick={this.minus}> - minus</button>
+      </div>
+    );
+  }
+}
+```
+
+**store**
+
+```javascript
+import { createStore } from 'redux';
+
+function countReducer(state = 0, action) {
+  switch (action.type) {
+  case 'ADD':
+    return state + 1;
+  case 'MINUS':
+    return state - 1;
+  default:
+    return state;
+  }
+}
+
+const store = createStore(countReducer);
+
+export default store;
+
+```
+
+**效果**
+
+![](https://raw.githubusercontent.com/claude-hub/cloud-img/main/2020/20201219162816.gif)
+
+### 4.2 分析
+
+点击按钮 => 执行store.dispatch函数 (参数只能支持对象) => store由redux的countReducer方法创建 (参数就是我们定义的reducer纯函数) => 页面通过store.getState()获取到store的数据 => 想要页面更新，必须使用store.subscribe订阅状态变更 => store数据改变后会触发subscribe，然后页面调用forceUpdate就更新页面了
+
+总结：redux需要下面的函数
+
+1. dispatch 提交更新
+2. createStore 创建store
+3. getState 获取状态值
+4. subscribe 变更订阅
+
+### 4.3 createStore
+
+调用这个函数返回store，store里面包含dispatch，subscribe，getState
+
+```javascript
+// function countReducer(state = 0, action) {
+//   switch (action.type) {
+//   case 'ADD':
+//     return state + 1;
+//   case 'MINUS':
+//     return state - 1;
+//   default:
+//     return state;
+//   }
+// }
+// const store = createStore(countReducer); 传入了定义的reducer
+export default function createStore(reducer) {
+  let currentState;
+  const currentListeners = [];
+  function getState() {
+    return currentState;
+  }
+
+  // store.dispatch({ type: 'ADD' }); 传入了一个action
+  function dispatch(action) {
+    // 执行一下reducer
+    currentState = reducer(currentState, action);
+    // 数据更新后，把所有的listener执行一遍
+    currentListeners.forEach(listener => listener());
+  }
+
+  // 传入了一个回调函数，数据更新了，就执行这个回调
+  function subscribe(listener) {
+    currentListeners.push(listener);
+  }
+
+  // 初始值，手动发一个dispatch，为避免和用户创建的一样，源码里面采用了随机字符串。
+  dispatch({ type: 'REDUX/MIN_REDUX' });
+
+  return {
+    subscribe,
+    getState,
+    dispatch
+  };
+}
+```
+
+然后把咋们store里面引入redux的位置替换为我们的createStore就完成了。
+
+>  import { createStore } from 'redux'; // 替换下redux
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
