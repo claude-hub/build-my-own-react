@@ -1,5 +1,8 @@
 ## React全家桶 - Redux篇
 
+![](https://cdn.jsdelivr.net/gh/claude-hub/cloud-img/2020/20201219172440.png)
+
+
 [中文文档](https://www.redux.org.cn/)
 
 ### 1. 功能列表
@@ -27,7 +30,7 @@
 
 两个最基本的运算：合成（compose）和柯里化（Currying）
 
-### 3.1 合成(compose)
+#### 3.1 合成(compose)
 
 如果一个值要经过多个函数，才能变成另外一个值，就可以把所有中间步骤合并成一个函数，这叫做"函数的合成"（compose）
 
@@ -63,7 +66,7 @@ const result = compose(fun1, fun2, fun3)(0); // fun1(fun2(fun3(0)))
 console.log(result) // 0+1+2+3
 ```
 
-### 3.2 柯里化(Currying)
+#### 3.2 柯里化(Currying)
 
 `fun1(x)` 和 `fun2(x)` 要合并为一个函数`fun1(fun2(x))`，有一个前提是`fun1`和`fun2`都只有一个参数，那么如果可以接受多个参数，`fun1(x, y)` 和 `fun2(x, y, z)`，函数合并就比价麻烦了。
 
@@ -89,7 +92,7 @@ addX(2)(1) // 3
 
 ### 4. mini版实现
 
-### 4.1 通过原库实现
+#### 4.1 通过原库实现
 
 思路：先使用一个简单的页面，使用Redux和React搭建起来，然后再自己实现对应的函数。
 
@@ -158,9 +161,9 @@ export default store;
 
 **效果**
 
-![](https://raw.githubusercontent.com/claude-hub/cloud-img/main/2020/20201219162816.gif)
+![](https://cdn.jsdelivr.net/gh/claude-hub/cloud-img/2020/20201219162816.gif)
 
-### 4.2 分析
+#### 4.2 分析
 
 点击按钮 => 执行store.dispatch函数 (参数只能支持对象) => store由redux的countReducer方法创建 (参数就是我们定义的reducer纯函数) => 页面通过store.getState()获取到store的数据 => 想要页面更新，必须使用store.subscribe订阅状态变更 => store数据改变后会触发subscribe，然后页面调用forceUpdate就更新页面了
 
@@ -171,7 +174,7 @@ export default store;
 3. getState 获取状态值
 4. subscribe 变更订阅
 
-### 4.3 createStore
+#### 4.3 createStore
 
 调用这个函数返回store，store里面包含dispatch，subscribe，getState
 
@@ -220,19 +223,11 @@ export default function createStore(reducer) {
 
 然后把咋们store里面引入redux的位置替换为我们的createStore就完成了。
 
->  import { createStore } from 'redux'; // 替换下redux
+>  import { createStore } from 'redux'; // 替换下store中createStore函数路径
 
 
 
+### 结尾
 
-
-
-
-
-
-
-
-
-
-
+仓库地址：[https://github.com/claude-hub/build-my-own-react](https://github.com/claude-hub/build-my-own-react)，求star~。
 
