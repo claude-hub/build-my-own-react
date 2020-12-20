@@ -2,7 +2,6 @@
 
 ![](https://cdn.jsdelivr.net/gh/claude-hub/cloud-img/2020/20201219172440.png)
 
-
 [中文文档](https://www.redux.org.cn/)
 
 ### 1. 功能列表
@@ -208,6 +207,10 @@ export default function createStore(reducer) {
   // 传入了一个回调函数，数据更新了，就执行这个回调
   function subscribe(listener) {
     currentListeners.push(listener);
+    // 组件摧毁的时候，需要取消订阅
+    return () => {
+      currentListeners.filter(item => item !== listener);
+    };
   }
 
   // 初始值，手动发一个dispatch，为避免和用户创建的一样，源码里面采用了随机字符串。
@@ -225,7 +228,159 @@ export default function createStore(reducer) {
 
 >  import { createStore } from 'redux'; // 替换下store中createStore函数路径
 
+### 5. 进阶 - 中间件
 
+[异步数据流](https://www.redux.org.cn/docs/advanced/AsyncFlow.html)
+
+默认情况下，[`createStore()`](https://www.redux.org.cn/docs/api/createStore.html) 所创建的 Redux store 没有使用 [middleware](https://www.redux.org.cn/docs/advanced/Middleware.html)，所以只支持 [同步数据流](https://www.redux.org.cn/docs/basics/DataFlow.html)。
+
+你可以使用 [`applyMiddleware()`](https://www.redux.org.cn/docs/api/applyMiddleware.html) 来增强 [`createStore()`](https://www.redux.org.cn/docs/api/createStore.html)。
+
+#### 5.1 使用中间件
+
+咋们在page页里面添加两个按钮并绑定事件
+
+```javascript
+asyncAdd = () => {
+    store.dispatch((dispatch) => {
+        setTimeout(() => {
+            dispatch({ type: 'ADD' });
+        }, 1000);
+    });
+}
+promiseMinus = () => {
+    store.dispatch(Promise.resolve({
+        type: 'MINUS',
+        payload: 1000
+    }));
+}
+
+<button style={{ margin: '0 8px' }} type="button" onClick={this.asyncAdd}> + async add</button>
+
+<button style={{ margin: '0 8px' }} type="button" onClick={this.promiseMinus}> - promise minus</button>
+```
+
+上面代码中，dispatch中我们传入了一个函数，以及Promise。
+
+在**store**中引入`redux-promise`支持promise,  `redux-thunk`支持异步数据, `redux-logger`打印store数据变更日志。 
+
+```javascript
+import { applyMiddleware, createStore } from 'redux';
+import promise from 'redux-promise';
+import thunk from 'redux-thunk';
+import logger from 'redux-logger';
+
+const store = createStore(countReducer, applyMiddleware(thunk, logger, promise));
+```
+
+效果如下：
+
+![](https://cdn.jsdelivr.net/gh/claude-hub/cloud-img/2020/20201220215542.gif)
+
+#### 5.2 applyMiddleware
+
+由上面的用法，我们可以看出，`applyMiddleware`支持传入多个中间件，作用为增强store的功能，使dispatch支持Promise和异步数据流。
+
+`createStore`函数目前支持两个参数了，但是我们上面写的代码只支持一个参数。添加下面的代码，如果有第二个参数就把第二个参数执行了，我们需要增加store所有传入了参数store，然后执行的时候，需要用到reducer。
+
+```javascript
+export default function createStore(reducer, enhancer) {
+  if (enhancer) {
+    return enhancer(createStore)(reducer);
+  }
+  ......
+}
+```
+
+**applyMiddleware实现**
+
+```javascript
+import compose from './compose';
+
+export default function applyMiddleware(...middlewares) {
+  // createStore就是我们实现的createStore函数，支持两个参数，一个参数是reducer，第二个参数是enhancer
+  // args就是我们执行第二个参数enhancer时传入参数 => reducer, 这里具体的就是countReducer
+  return createStore => (...args) => {
+    // 柯里化，执行一下只传入第一个参数的createStore，我们就获取到了store，store里面有dispatch
+    const store = createStore(...args);
+    let { dispatch } = store;
+    // 获取到dispatch后，我们需要对它进行增强
+    const middlewareAPI = {
+      getState: store.getState,
+      // disptch原本有哪些参数，都传进去
+      dispatch: (...params) => dispatch(...params)
+    };
+    // 传入每个中间件都需要的getState和需要加强的dispatch
+    const chain = middlewares.map(middleware => middleware(middlewareAPI));
+    // 执行每一个中间件就ok了，利用到了我们上面写的compse函数。
+    // 这里有点绕，需要弄懂compose函数，到底在干啥。
+    // applyMiddleware(thunk, logger, promise)使用的时候，我们传入了3个中间件
+    // 使用compose 等价于 thunk(logger(promise(dispatch)))
+    // 第一次执行promise，返回一个回调函数， 第二次执行logger同样返回一个回调函数，最后执行完thunk时，才会执行外部的真正的回调函数
+    dispatch = compose(...chain)(store.dispatch);
+
+    return {
+      ...store,
+      // 返回增强后的dispatch
+      dispatch
+    };
+  };
+}
+```
+
+#### 5.3 redux-logger
+
+先来实现一个最简单的`redux-logger`, 打印store的变化
+
+```javascript
+// const chain = middlewares.map(middleware => middleware(middlewareAPI));
+// 在上面的代码中，我们传入了middlewareAPI，解构获取到getState
+export default function logger({ getState }) {
+  // compose聚合函数中，执行reduce的时候，fn1和f2，next就是f1。
+  return next => action => {
+    console.log('***********************************');
+    console.log(`action ${action.type} @ ${new Date().toLocaleString()}`);
+    // 执行一下getState()，获取当前的state。
+    const prevState = getState();
+    console.log('prev state', prevState);
+
+    // 执行dispatch
+    const returnValue = next(action);
+    // 获取到执行后的state
+    const nextState = getState();
+    console.log('next state', nextState);
+
+    console.log('***********************************');
+    return returnValue;
+  };
+}
+```
+
+#### 5.4 redux-thunk
+
+```javascript
+export default function thunk({ getState, dispatch }) {
+  return next => action => {
+    // 如果dispatch传入的是一个函数，那么执行这个函数，执行完这个函数后，返回一个函数，就进入回调了
+    if (typeof action === 'function') {
+      return action(dispatch, getState);
+    }
+    return next(action);
+  };
+}
+```
+
+#### 5.5 redux-promise
+
+```javascript
+import isPromise from 'is-promise';
+
+// 简版
+export default function promise({ dispatch }) {
+  return next => action => (isPromise(action) ? action.then(dispatch)
+    : next(action));
+}
+```
 
 ### 结尾
 
