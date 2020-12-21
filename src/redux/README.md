@@ -228,7 +228,7 @@ export default function createStore(reducer) {
 
 >  import { createStore } from 'redux'; // 替换下store中createStore函数路径
 
-### 5. 进阶 - 中间件
+### 5. 中间件
 
 [异步数据流](https://www.redux.org.cn/docs/advanced/AsyncFlow.html)
 
@@ -380,6 +380,76 @@ export default function promise({ dispatch }) {
   return next => action => (isPromise(action) ? action.then(dispatch)
     : next(action));
 }
+```
+
+### 6. combineReducers
+
+项目中不可能只有一个`Reducer`，这个时候就需要`combineReducers`来把所有`Reducer`合并为一个了。
+
+#### 6.1 用法
+
+**page**
+
+```javascript
+addTodo = () => {
+    store.dispatch({ type: 'ADD_TODO', payload: ' world!' });
+}
+
+<h2>ReduxPage</h2>
+<h4>Count</h4>
+<p>{store.getState().count}</p>
+
+<h4 style={{ marginTop: '24px' }}>Todo</h4>
+<p>{store.getState().todos}</p>
+<button type="button" onClick={this.addTodo}>添加todo</button>
+```
+
+**store**
+
+```javascript
+import { applyMiddleware, createStore, combineReducers } from 'redux';
+
+function todoReducer(state = ['hello'], action) {
+  switch (action.type) {
+  case 'ADD_TODO':
+    return state.concat([action.payload]);
+  default:
+    return state;
+  }
+}
+
+// 只有一个reducer
+// const store = createStore(countReducer, applyMiddleware(thunk, logger, promise));
+
+// 多个reducer合并
+const store = createStore(
+  combineReducers({
+    count: countReducer,
+    todos: todoReducer
+  }),
+  applyMiddleware(thunk, logger, promise)
+);
+```
+
+#### 6.2 实现
+
+```javascript
+export default function combineReducers(reducers) {
+  return function combination(state = {}, action) {
+    const nextState = {};
+    let hasChanged = false;
+    Object.keys(reducers).forEach(key => {
+      const reducer = reducers[key];
+      nextState[key] = reducer(state[key], action);
+      hasChanged = hasChanged || nextState[key] !== state[key];
+    });
+    // 源码里面提供了replaceReducer,
+    // replaceReducer => {a: 0, b: 1} 替换为了{a: 0}
+    // 所以需要比较两次的length发生变化没有
+    hasChanged = hasChanged || Object.keys(nextState).length !== Object.keys(state).length;
+    return hasChanged ? nextState : state;
+  };
+} 
 ```
 
 ### 结尾
