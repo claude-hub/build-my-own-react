@@ -452,6 +452,31 @@ export default function combineReducers(reducers) {
 } 
 ```
 
+### 7.bindActionCreator
+
+配合`react-redux`使用，[文档](https://www.redux.org.cn/docs/api/bindActionCreators.html)
+
+**实现**
+
+```javascript
+function bindActionCreator(actionCreator, dispatch) {
+  return (...args) => dispatch(actionCreator(...args));
+}
+
+// 用法，给creators添加dispatch
+// let creators = {
+//   add: () => ({ type: 'ADD' }),
+//   minus: () => ({ type: 'MINUS' })
+// };
+// creators = bindActionCreators(creators, dispatch);
+export default function bindActionCreators(actionCreators, dispatch) {
+  const boundActionCreators = {};
+  Object.keys(actionCreators).forEach(key => {
+    const actionCreator = actionCreators[key];
+    boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+  });
+}
+```
 ### 结尾
 
 仓库地址：[https://github.com/claude-hub/build-my-own-react](https://github.com/claude-hub/build-my-own-react)，求star~。
