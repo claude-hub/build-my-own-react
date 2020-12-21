@@ -38,15 +38,24 @@ export default class ReduxPage extends Component {
     }));
   }
 
+  addTodo = () => {
+    store.dispatch({ type: 'ADD_TODO', payload: ' world!' });
+  }
+
   render() {
     return (
       <div style={{ padding: 24 }}>
-        <h3>ReduxPage</h3>
-        <p>{store.getState()}</p>
+        <h2>ReduxPage</h2>
+        <h4>Count</h4>
+        <p>{store.getState().count}</p>
         <button type="button" onClick={this.add}> + add</button>
         <button style={{ margin: '0 8px' }} type="button" onClick={this.asyncAdd}> + async add</button>
         <button type="button" onClick={this.minus}> - minus</button>
         <button style={{ margin: '0 8px' }} type="button" onClick={this.promiseMinus}> - promise minus</button>
+
+        <h4 style={{ marginTop: '24px' }}>Todo</h4>
+        <p>{store.getState().todos}</p>
+        <button type="button" onClick={this.addTodo}>添加todo</button>
       </div>
     );
   }
