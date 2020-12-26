@@ -44,8 +44,8 @@ export default class ReduxPage extends Component {
 
   render() {
     return (
-      <div style={{ padding: 24 }}>
-        <h2>ReduxPage</h2>
+      <div>
+        <h2>Redux Page</h2>
         <h4>Count</h4>
         <p>{store.getState().count}</p>
         <button type="button" onClick={this.add}> + add</button>
