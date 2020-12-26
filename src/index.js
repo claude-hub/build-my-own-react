@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import ReduxPage from './redux/page';
+import ReactReduxPage from './react-redux/page';
 
 ReactDOM.render(
   <React.StrictMode>
     <ReduxPage />
+    <ReactReduxPage />
   </React.StrictMode>,
   document.getElementById('root')
 );
