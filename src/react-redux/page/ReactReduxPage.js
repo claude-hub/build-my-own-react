@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-// import { connect } from '../mini-react-redux';
-// import { bindActionCreators } from '../../redux/mini-redux';
+// import { connect } from 'react-redux';
+// import { bindActionCreators } from 'redux';
+import { connect } from '../mini-react-redux';
+import { bindActionCreators } from '../../redux/mini-redux';
 
 class ReactReduxPage extends PureComponent {
   render() {
