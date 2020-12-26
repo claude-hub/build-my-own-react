@@ -4,11 +4,15 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import ReduxPage from './redux/page';
 import ReactReduxPage from './react-redux/page';
+import store from './redux/store';
+import { Provider } from './react-redux/mini-react-redux';
 
 ReactDOM.render(
   <React.StrictMode>
     <ReduxPage />
-    <ReactReduxPage />
+    <Provider store={store}>
+      <ReactReduxPage />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

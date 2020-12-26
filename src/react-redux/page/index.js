@@ -1,17 +1,10 @@
-import React, { PureComponent } from 'react';
-// import { Provider } from 'react-redux';
-import { Provider } from '../mini-react-redux/index';
-import store from '../../redux/store';
+import React from 'react';
 import ReactReduxPage from './ReactReduxPage';
 
-class Page extends PureComponent {
-  render() {
-    return (
-      <Provider store={store}>
-        <ReactReduxPage />
-      </Provider>
-    );
-  }
+export default function Page(params) {
+  return (
+    <div>
+      <ReactReduxPage></ReactReduxPage>
+    </div>
+  );
 }
-
-export default Page;
