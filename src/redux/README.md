@@ -125,8 +125,8 @@ export default class ReduxPage extends Component {
 
   render() {
     return (
-      <div style={{ padding: 24 }}>
-        <h3>ReduxPage</h3>
+      <div>
+        <h3>Redux Page</h3>
         <p>{store.getState()}</p>
         <button type="button" onClick={this.add}> + add</button>
         <button type="button" onClick={this.minus}> - minus</button>
@@ -395,7 +395,7 @@ addTodo = () => {
     store.dispatch({ type: 'ADD_TODO', payload: ' world!' });
 }
 
-<h2>ReduxPage</h2>
+<h2>Redux Page</h2>
 <h4>Count</h4>
 <p>{store.getState().count}</p>
 

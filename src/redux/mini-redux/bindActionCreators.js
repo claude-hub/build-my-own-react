@@ -14,4 +14,5 @@ export default function bindActionCreators(actionCreators, dispatch) {
     const actionCreator = actionCreators[key];
     boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
   });
+  return boundActionCreators;
 }

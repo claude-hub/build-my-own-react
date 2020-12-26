@@ -1,13 +1,15 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+// import { connect } from 'react-redux';
+// import { bindActionCreators } from 'redux';
+import { connect } from '../mini-react-redux';
+import { bindActionCreators } from '../../redux/mini-redux';
 
 class ReactReduxPage extends PureComponent {
   render() {
-    const { count, dispatch, add } = this.props;
+    const { count, dispatch = () => {}, add } = this.props;
     return (
-      <div style={{ padding: 24 }}>
-        <h3>ReactReduxPage</h3>
+      <div>
+        <h3>React Redux Page - 函数组件</h3>
         <p>{count}</p>
         <button type="button" onClick={() => dispatch({ type: 'ADD' })}>dispatch add</button>
         <button style={{ margin: 8 }} type="button" onClick={add}>add</button>
