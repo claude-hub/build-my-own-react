@@ -9,7 +9,7 @@ class ReactReduxPage extends PureComponent {
     const { count, dispatch = () => {}, add } = this.props;
     return (
       <div>
-        <h3>React Redux Page - 函数组件</h3>
+        <h2>React Redux Page - 函数组件</h2>
         <p>{count}</p>
         <button type="button" onClick={() => dispatch({ type: 'ADD' })}>dispatch add</button>
         <button style={{ margin: 8 }} type="button" onClick={add}>add</button>

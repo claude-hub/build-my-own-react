@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+nav {
+  margin: 0 -24px;
+}
+
 nav a {
   margin: 0 24px;
 }
