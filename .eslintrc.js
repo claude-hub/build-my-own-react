@@ -198,6 +198,7 @@ module.exports = {
     ],
     'linebreak-style': 0,
     // 结构传props
-    'react/jsx-props-no-spreading': 0
+    'react/jsx-props-no-spreading': 0,
+    'react/no-children-prop': 0
   }
 };
