@@ -10,7 +10,7 @@ export default function ReduxHooksPage(props) {
   }, []);
   return (
     <div>
-      <h3>React Redux Page - Hooks</h3>
+      <h2>React Redux Page - Hooks</h2>
       <p>{count}</p>
       <button type="button" onClick={add}>add</button>
     </div>

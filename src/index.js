@@ -1,17 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-  // BrowserRouter as Router,
-  // Route,
-  // Link,
-  // Switch,
-  useRouteMatch,
-  useHistory,
-  useLocation,
-  useParams,
-  withRouter,
-  Prompt
-} from 'react-router-dom';
+// import {
+//   BrowserRouter as Router,
+//   Route,
+//   Link,
+//   Switch,
+//   useRouteMatch,
+//   useHistory,
+//   useLocation,
+//   useParams,
+//   withRouter,
+//   Prompt
+// } from 'react-router-dom';
 import {
   BrowserRouter as Router,
   Route,
@@ -23,7 +23,7 @@ import './index.css';
 import { Provider } from './react-redux/mini-react-redux';
 import ReduxPage from './redux/page';
 import ReactReduxPage from './react-redux/page';
-import { HomePage, ReactRouterDomPage, _404Page } from './react-router-dom/page';
+import { HomePage, _404Page, ReactRouterPage } from './react-router-dom/page';
 import store from './redux/store';
 
 function ReactRedux() {
@@ -66,7 +66,7 @@ ReactDOM.render(
           />
           <Route path="/redux" component={ReduxPage} />
           <Route path="/react-redux" component={ReactRedux} />
-          <Route path="/react-router/:id" component={ReactRouterDomPage} />
+          <Route path="/react-router/:id" component={ReactRouterPage} />
           {/* 如果不写path会默认渲染，但是加上了switch就不会渲染了 */}
           <Route component={_404Page} />
         </Switch>

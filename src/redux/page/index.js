@@ -52,7 +52,7 @@ export default class ReduxPage extends Component {
         <button style={{ margin: '0 8px' }} type="button" onClick={this.asyncAdd}> + async add</button>
         <button type="button" onClick={this.minus}> - minus</button>
         <button style={{ margin: '0 8px' }} type="button" onClick={this.promiseMinus}> - promise minus</button>
-
+        <h3>多个Reducer</h3>
         <h4 style={{ marginTop: '24px' }}>Todo</h4>
         <p>{store.getState().todos}</p>
         <button type="button" onClick={this.addTodo}>添加todo</button>

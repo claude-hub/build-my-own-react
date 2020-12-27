@@ -4,9 +4,7 @@ class HomePage extends PureComponent {
   render() {
     console.log(this.props);
     return (
-      <div style={{ margin: 32 }}>
-        <h2>欢迎来到源码世界!</h2>
-      </div>
+      <h2>欢迎来到源码世界!</h2>
     );
   }
 }
