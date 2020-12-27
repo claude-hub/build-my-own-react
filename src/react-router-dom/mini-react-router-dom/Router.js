@@ -2,6 +2,12 @@ import React, { PureComponent } from 'react';
 import { RouterContext } from './Context';
 
 class Router extends PureComponent {
+  static computeRootMatch(pathname) {
+    return {
+      path: '/', url: '/', params: {}, isExact: pathname === '/'
+    };
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -12,9 +18,15 @@ class Router extends PureComponent {
   componentDidMount() {
     const { history } = this.props;
     // location发生变化的回调
-    history.listen(({ location }) => {
+    this.unsubscribe = history.listen(({ location }) => {
       this.setState({ location });
     });
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 
   render() {
@@ -24,7 +36,8 @@ class Router extends PureComponent {
       <RouterContext.Provider
         value={{
           history,
-          location
+          location,
+          match: Router.computeRootMatch(location.pathname)
         }}>
         {children}
       </RouterContext.Provider>
