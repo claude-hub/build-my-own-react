@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Switch,
+  // BrowserRouter as Router,
+  // Route,
+  // Link,
+  // Switch,
   useRouteMatch,
   useHistory,
   useLocation,
@@ -12,6 +12,12 @@ import {
   withRouter,
   Prompt
 } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch
+} from './react-router-dom/mini-react-router-dom';
 import './index.css';
 // import { Provider } from 'react-redux';
 import { Provider } from './react-redux/mini-react-redux';
@@ -32,7 +38,7 @@ function renderByChildren() {
   return (<div>children</div>);
 }
 
-function renderByRender(params) {
+function renderByRender() {
   return (<div>render</div>);
 }
 
@@ -45,6 +51,7 @@ ReactDOM.render(
           <Link to="/redux">Redux</Link>
           <Link to="/react-redux">React Redux</Link>
           <Link to="/react-router/123">React Router</Link>
+          <Link to="/404">404</Link>
         </nav>
         {/* switch独占路由，只会匹配一个 */}
         <Switch>

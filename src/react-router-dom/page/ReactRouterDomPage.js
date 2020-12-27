@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 
-class Test extends PureComponent {
+class ReactRouterDomPage extends PureComponent {
   render() {
     return (
-      <div>123</div>
+      <h2>React Router Page</h2>
     );
   }
 }
 
-export default Test;
+export default ReactRouterDomPage;
