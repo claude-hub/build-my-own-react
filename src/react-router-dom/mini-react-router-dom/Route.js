@@ -6,15 +6,17 @@ import { RouterContext } from './Context';
 class Route extends PureComponent {
   render() {
     const {
-      children, component, render, path
+      children, component, render, path, computedMatch
     } = this.props;
     return (
       <RouterContext.Consumer>
         {context => {
           const { location } = context;
           // const match = location.pathname === path;
-          // 精确匹配, 如果<Route />参数不写path，就会默认渲染出来 (404的实现)
-          const match = path ? matchPath(location.pathname, this.props) : context.match;
+          // 如果传入了computedMatch，说明需要Switch独占路由, 优先级高于Route默认的匹配
+          const match = computedMatch
+          // 如果<Route />参数不写path，就会默认渲染出来 (404的实现)
+          || (path ? matchPath(location.pathname, this.props) : context.match);
           const props = {
             ...context,
             match

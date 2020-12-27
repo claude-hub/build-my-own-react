@@ -60,9 +60,9 @@ ReactDOM.render(
             path="/"
             // 优先级: children > component > render
             // children特性，不管路由匹不匹配都会渲染，但是这里有switch，只会匹配到一个Route
-            children={renderByChildren}
+            // children={renderByChildren}
             component={HomePage}
-            render={renderByRender}
+            // render={renderByRender}
           />
           <Route path="/redux" component={ReduxPage} />
           <Route path="/react-redux" component={ReactRedux} />
