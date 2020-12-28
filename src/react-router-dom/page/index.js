@@ -2,6 +2,8 @@ import HomePage from './HomePage';
 import _404Page from './404';
 import ReactRouterClassPage from './ReactRouterClassPage';
 import ReactRouterHooksPage from './ReactRouterHooksPage';
+import RedirectPage from './RedirectPage';
+import PromptPage from './PromptPage';
 
 function ReactRouterPage(props) {
   return (
@@ -18,5 +20,7 @@ function ReactRouterPage(props) {
 export {
   HomePage,
   _404Page,
-  ReactRouterPage
+  ReactRouterPage,
+  RedirectPage,
+  PromptPage
 };

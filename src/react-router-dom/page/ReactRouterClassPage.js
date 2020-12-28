@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 // import { withRouter } from 'react-router-dom';
-import withRouter from '../mini-react-router-dom/withRouter';
+import { withRouter } from '../mini-react-router-dom';
 
 class ReactRouterClassPage extends PureComponent {
   render() {

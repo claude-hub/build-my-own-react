@@ -23,7 +23,9 @@ import './index.css';
 import { Provider } from './react-redux/mini-react-redux';
 import ReduxPage from './redux/page';
 import ReactReduxPage from './react-redux/page';
-import { HomePage, _404Page, ReactRouterPage } from './react-router-dom/page';
+import {
+  HomePage, _404Page, ReactRouterPage, RedirectPage, PromptPage
+} from './react-router-dom/page';
 import store from './redux/store';
 
 function ReactRedux() {
@@ -51,6 +53,8 @@ ReactDOM.render(
           <Link to="/redux">Redux</Link>
           <Link to="/react-redux">React Redux</Link>
           <Link to="/react-router/123">React Router</Link>
+          <Link to="/redirect">Redirect</Link>
+          <Link to="/prompt">Prompt</Link>
           <Link to="/404">404</Link>
         </nav>
         {/* switch独占路由，只会匹配一个 */}
@@ -67,6 +71,8 @@ ReactDOM.render(
           <Route path="/redux" component={ReduxPage} />
           <Route path="/react-redux" component={ReactRedux} />
           <Route path="/react-router/:id" component={ReactRouterPage} />
+          <Route path="/redirect" component={RedirectPage} />
+          <Route path="/prompt" component={PromptPage} />
           {/* 如果不写path会默认渲染，但是加上了switch就不会渲染了 */}
           <Route component={_404Page} />
         </Switch>

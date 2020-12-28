@@ -18,7 +18,7 @@ class Router extends PureComponent {
   componentDidMount() {
     const { history } = this.props;
     // location发生变化的回调
-    this.unsubscribe = history.listen(({ location }) => {
+    this.unsubscribe = history.listen((location) => {
       this.setState({ location });
     });
   }
