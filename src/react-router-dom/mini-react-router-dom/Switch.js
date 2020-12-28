@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { matchPath } from 'react-router-dom';
+import matchPath from './matchPath';
 import { RouterContext } from './Context';
 
 class Switch extends PureComponent {
