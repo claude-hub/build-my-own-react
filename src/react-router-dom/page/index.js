@@ -1,3 +1,4 @@
+import React from 'react';
 import HomePage from './HomePage';
 import _404Page from './404';
 import ReactRouterClassPage from './ReactRouterClassPage';

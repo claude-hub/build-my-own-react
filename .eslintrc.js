@@ -67,7 +67,7 @@ module.exports = {
     'no-spaced-func': 2, // 函数调用时 函数名与()之间不能有空格
     'no-this-before-super': 0, // 在调用super()之前不能使用this或super
     'no-undef': 2, // 不能有未定义的变量
-    'no-use-before-define': 2, // 未定义前不能使用
+    'no-use-before-define': 0, // 未定义前不能使用
     camelcase: 0, // 强制驼峰法命名
     'jsx-quotes': [2, 'prefer-double'], // 强制在JSX属性（jsx-quotes）中一致使用双引号
     'react/display-name': 0, // 防止在React组件定义中丢失displayName
@@ -199,6 +199,8 @@ module.exports = {
     'linebreak-style': 0,
     // 结构传props
     'react/jsx-props-no-spreading': 0,
-    'react/no-children-prop': 0
+    'react/no-children-prop': 0,
+    // 可以对参数类型为object的删除key
+    'no-param-reassign': 0
   }
 };
