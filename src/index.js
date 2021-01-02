@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import MiniReactDOM from './react/mini-react/react-dom';
 // import {
 //   BrowserRouter as Router,
 //   Route,
@@ -21,6 +22,7 @@ import {
 import './index.css';
 // import { Provider } from 'react-redux';
 import { Provider } from './react-redux/mini-react-redux';
+import ReactPage from './react/page';
 import ReduxPage from './redux/page';
 import ReactReduxPage from './react-redux/page';
 import {
@@ -81,3 +83,5 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
+
+MiniReactDOM.render(<ReactPage />, document.getElementById('react'));
