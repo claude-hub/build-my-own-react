@@ -201,6 +201,8 @@ module.exports = {
     'react/jsx-props-no-spreading': 0,
     'react/no-children-prop': 0,
     // 可以对参数类型为object的删除key
-    'no-param-reassign': 0
+    'no-param-reassign': 0,
+    'react/static-property-placement': 0,
+    'react/prefer-stateless-function': 0 // 必须使用PureComponent
   }
 };
