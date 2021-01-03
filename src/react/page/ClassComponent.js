@@ -1,19 +1,32 @@
-import React, { Component } from '../mini-react/react';
+import React, { Component, Fragment } from '../mini-react/react';
 
-// eslint-disable-next-line react/prefer-stateless-function
 class Test extends Component {
+  static defaultProps = {
+    color: 'red'
+  };
+
   render() {
-    const { name } = this.props;
+    const { name, color } = this.props;
     return (
       <div>
-        <div>{`类组件 - ${name}`}</div>
-        {
-          [1, 2].map(item => <div key={item}>{item}</div>)
-        }
-        <>
-          <div>a</div>
-          <div>b</div>
-        </>
+        <p>{`类组件 - ${name}`}</p>
+        <p>
+          <span>数组: </span>
+          {
+            ['hello', 'world!'].map(item => <span key={item}>{`${item} `}</span>)
+          }
+        </p>
+        <p>
+          <span>{'Fragment与<>: '}</span>
+          <span>
+            <>{`I am ${'<>'}.`}</>
+            <Fragment> I am Fragment.</Fragment>
+          </span>
+        </p>
+        <p>
+          <span>defaultProps: </span>
+          <span className={color}>red color</span>
+        </p>
       </div>
     );
   }
