@@ -1,12 +1,18 @@
 // vnode => 虚拟dom
 // node => 真实dom
 
-import { TEXT, PIXEL, PLACEMENT } from '../react/Constant';
+import {
+  TEXT, PIXEL, PLACEMENT, UPDATE
+} from '../react/Constant';
 
 // 下一个单元任务 => fiber
 let nextUnitOfWork = null;
 // work in progress fiber root => 正在执行的根fiber
 let wipRoot = null;
+// work in progress fiber => 正在执行的fiber
+let wipFiber = null;
+// 当前的根节点
+let currentRoot = null;
 
 // 虚拟dom转化为真实dom
 function createNode(vnode) {
@@ -26,7 +32,7 @@ function createNode(vnode) {
   }
   // reconcileChildren(props.children, node);
 
-  updateNode(node, props);
+  updateNode(node, {}, props);
   return node;
 }
 
@@ -37,6 +43,11 @@ function createNode(vnode) {
 // }
 
 function updateFunctionComponent(fiber) {
+  // 函数组件useState的时候用到
+  wipFiber = fiber;
+  wipFiber.hooks = [];
+  wipFiber.hookIndex = 0;
+
   const { type, props } = fiber;
   const vvnode = type(props);
   const children = Array.isArray(vvnode) ? [...vvnode] : [vvnode];
@@ -93,10 +104,38 @@ function updateClassComponent(fiber) {
 function reconcileChildren(workInProgressFiber, children) {
   // 构建fiber架构
   let prevSibling = null;
+
+  // 获取老fiber的第一个节点
+  let oldFiber = workInProgressFiber.base && workInProgressFiber.base.child;
+
   children.forEach((child, index) => {
     if (Array.isArray(child)) {
       child.forEach((c, i) => {
-        const newFiber = baseFiber(c, workInProgressFiber);
+        let newFiber = null;
+        // 复用的前提是key和type都相同
+        const sameType = c && oldFiber && c.type === oldFiber.type;
+        if (sameType) {
+          // 类型相同, 复用
+          newFiber = {
+            type: c.type,
+            props: c.props,
+            node: oldFiber.node,
+            base: oldFiber,
+            return: workInProgressFiber,
+            effectTag: UPDATE
+          };
+        }
+        if (!sameType && c) {
+          // 新增，创建新fiber
+          newFiber = baseFiber(c, workInProgressFiber);
+        }
+        if (!sameType && oldFiber) {
+          //
+        }
+        if (oldFiber) {
+          oldFiber = oldFiber.sibling;
+        }
+
         if (i === 0) {
           workInProgressFiber.child = newFiber;
         } else {
@@ -105,7 +144,31 @@ function reconcileChildren(workInProgressFiber, children) {
         prevSibling = newFiber;
       });
     } else {
-      const newFiber = baseFiber(child, workInProgressFiber);
+      let newFiber = null;
+      // 复用的前提是key和type都相同
+      const sameType = child && oldFiber && child.type === oldFiber.type;
+      if (sameType) {
+        // 类型相同, 复用
+        newFiber = {
+          type: child.type,
+          props: child.props,
+          node: oldFiber.node,
+          base: oldFiber,
+          return: workInProgressFiber,
+          effectTag: UPDATE
+        };
+      }
+      if (!sameType && child) {
+        // 新增，创建新fiber
+        newFiber = baseFiber(child, workInProgressFiber);
+      }
+      if (!sameType && oldFiber) {
+        //
+      }
+      if (oldFiber) {
+        oldFiber = oldFiber.sibling;
+      }
+
       if (index === 0) {
         workInProgressFiber.child = newFiber;
       } else {
@@ -128,10 +191,31 @@ function baseFiber(child, workInProgressFiber) {
 }
 
 // 更新属性值，className，nodeValue
-function updateNode(node, nextVal) {
+function updateNode(node, prevVal, nextVal) {
+  // 点击多次的时候，会一直加点击事件，所以需要删除多余的事件
+  // 如果说prevVal, nextVal里有相同的属性值，这个时候不用管
+  // 如果说prevVal里有， nextVal没有，需要遍历prevVal执行删除操作
+  // 如果说prevVal里没有， nextVal有，这个时候不用管
+  Object.keys(prevVal)
+    .filter(k => k !== 'children')
+    .forEach(k => {
+      if (k.slice(0, 2) === 'on') {
+      // 简单粗暴 这是个事件
+        const eventName = k.slice(2).toLowerCase();
+        node.removeEventListener(eventName, prevVal[k]);
+      } else if (!(k in nextVal)) {
+        node[k] = '';
+      }
+    });
+
   Object.keys(nextVal).filter(k => k !== 'children').forEach(key => {
     if (key !== 'style') {
-      node[key] = nextVal[key];
+      if (key.slice(0, 2) === 'on') {
+        const eventName = key.slice(2).toLocaleLowerCase();
+        node.addEventListener(eventName, nextVal[key]);
+      } else {
+        node[key] = nextVal[key];
+      }
     } else {
       const style = Object.keys(nextVal[key]).map(k => {
         let value = `${k}: ${nextVal[key][k]}`;
@@ -223,6 +307,7 @@ function workLook(deadline) {
 function commitRoot() {
   // 最外层是container为#root没必要提交
   commitWorker(wipRoot.child);
+  currentRoot = wipRoot;
   wipRoot = null;
 }
 
@@ -239,6 +324,9 @@ function commitWorker(fiber) {
   // 新增
   if (fiber.effectTag === PLACEMENT && fiber.node != null) {
     parentNode.appendChild(fiber.node);
+  } else if (fiber.effectTag === UPDATE && fiber.node != null) {
+    // 更新props
+    updateNode(fiber.node, fiber.base.props, fiber.props);
   }
   // 更新子元素
   commitWorker(fiber.child);
@@ -247,5 +335,37 @@ function commitWorker(fiber) {
 }
 
 requestIdleCallback(workLook);
+
+export function useState(init) {
+  // 是否存在老的hook
+  const oldHook = wipFiber.base && wipFiber.base.hooks[wipFiber.hookIndex];
+  // 初次渲染和更新
+  const hook = oldHook ? {
+    state: oldHook.state,
+    queue: oldHook.queue
+  } : { state: init, queue: [] };
+
+  // 批量更新
+  hook.queue.forEach(action => {
+    hook.state = action;
+  });
+
+  const setState = (action) => {
+    // 点击的时候，看是否执行了多次点击事件
+    // console.log('action', action);
+    hook.queue.push(action);
+    wipRoot = {
+      node: currentRoot.node,
+      props: currentRoot.props,
+      base: currentRoot
+    };
+    nextUnitOfWork = wipRoot;
+  };
+
+  wipFiber.hooks.push(hook);
+  wipFiber.hookIndex += 1;
+
+  return [hook.state, setState];
+}
 
 export default { render };
