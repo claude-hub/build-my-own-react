@@ -352,7 +352,7 @@ export function useState(init) {
 
   const setState = (action) => {
     // 点击的时候，看是否执行了多次点击事件
-    // console.log('action', action);
+    console.log('action', action);
     hook.queue.push(action);
     wipRoot = {
       node: currentRoot.node,
